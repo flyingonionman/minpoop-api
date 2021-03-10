@@ -10,6 +10,8 @@ import { Strategy as GitHubStrategy} from 'passport-github';
 import passport from 'passport'
 import { User } from "./entities/User";
 import jwt from "jsonwebtoken"
+import cors from 'cors';
+import router from "../routers/index";
 
 (async()=>{
     await createConnection({
@@ -34,8 +36,11 @@ import jwt from "jsonwebtoken"
         done(null, user.accessToken);
     });
 
+    app.use(cors()); 
     app.use(passport.initialize());
-    
+    app.use(express.json())
+
+
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -54,22 +59,21 @@ import jwt from "jsonwebtoken"
 
             }
 
-            cb(null, {accessToken : jwt.sign({userId: user.id}, "aasagsfhsfhd",{
-                expiresIn: "1y"})
+            cb(null, {accessToken : jwt.sign(
+                {userId: user.id}, 
+                process.env.JWT_SECRET,
+                {expiresIn: "1y"})
                 })
             }
         )
     );
 
-    app.get('/auth/github', passport.authenticate('github', {session: false}));
-
-    app.get(
-        '/auth/github/callback', 
-        passport.authenticate('github', {session:false}),
-        (req: any, res)=> {
-            res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`)
-        }
-    );
+    /**
+     * Routing
+     * @user : auth related stuff
+     * @todo : CRUD related
+     */
+    router.init(app)
 
     app.get('/', (_req, res) => {
         res.send("hello");

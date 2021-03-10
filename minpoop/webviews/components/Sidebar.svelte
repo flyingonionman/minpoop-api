@@ -1,63 +1,48 @@
 <script lang="ts">
     import {onMount} from 'svelte'
-    let todos : Array<{text: string, completed: boolean}> = [];
-    let text = '';
-
-    onMount(()=>{
-        window.addEventListener('message', event => {
+    import type { User } from '../types';
+    import Todos from "./Todos.svelte";
+    
+    let loading = true;
+    let user : User | null = null;
+    let accessToken = '';
+    onMount(async ()=>{
+        window.addEventListener('message', async (event) => {
         const message = event.data; // The json data that the extension sent
         
         switch (message.type) {
-            case 'add-todo':
-                todos = [{text : message.value, completed:false},
-                    ...todos,
-                ];
-                break;
-        }
-    });
+                case 'token' : 
+                    accessToken = message.value;
+                    const response = await fetch(`${apiBaseUrl}/me`,{
+                        headers: {
+                            authorization : `Bearer ${accessToken}`,
+                        },
+                    });
+                    const data = await response.json()
+                    user = data.user;
+                    loading = false;
+            }
+        });
+
+        tsvscode.postMessage({type: "get-token", value: undefined});
     })
 </script>
 
-<style>
-    .complete {
-        text-decoration:line-through;
-    }
-</style>
 
-<form 
-    on:submit|preventDefault={()=>{
-        todos = [{text , completed:false}, ...todos];
-        text = '';
-    }}>
-    <input bind:value={text}/>
-</form>
 
-<ul>
-    {#each todos as todo (todo.text)}
-        <li 
-            class:complete ={todo.completed}
-            on:click={()=>{
-            todo.completed = !todo.completed;
-        }}>{todo.text}</li>
-    {/each}
-</ul>
+{#if loading}
+    <div>loading...</div>
+{:else if user}
+    <pre>{JSON.stringify(user,null,2)}</pre>
+    <Todos {user} {accessToken}/>
+    <button on:click={()=>{
+        accessToken= ' '
+        user = null
+        tsvscode.postMessage({ type: "logout", value: undefined})
+    }}>logout</button>
+{:else}
+    <button on:click={()=>{
+        tsvscode.postMessage({type: "authenticate", value: undefined});
+    }}>login with Github</button>
+{/if}
 
-<!-- svelte-ignore missing-declaration -->
-<button on:click={()=>{
-    tsvscode.postMessage({
-            type: 'onInfo',
-            value: 'info message'
-        });
-    }}>
-    click me
-</button>
-
-<!-- svelte-ignore missing-declaration -->
-<button on:click={()=>{
-    tsvscode.postMessage({
-            type: 'onError',
-            value: 'error message'
-        });
-    }}>
-    click me for error
-</button>

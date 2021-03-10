@@ -4,11 +4,14 @@ import { authenticate } from './authenticate';
 import * as vscode from 'vscode';
 import { HelloWorldPanel } from "./HelloworldPanel";
 import { SidebarProvider } from './SideBarProvider';
+import { TokenManager } from './Tokenmanager';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
 export async function activate(context: vscode.ExtensionContext) {
+	TokenManager.globalState = context.globalState; 
+
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
 
 	const item = vscode.window.createStatusBarItem(
@@ -46,12 +49,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('minpoop.helloWorld', () => {
 		HelloWorldPanel.createOrShow(context.extensionUri);
-		vscode.window.showInformationMessage('Hello World from vstodo!');
+		vscode.window.showInformationMessage(
+			"token value is : " + TokenManager.getToken()
+		);
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('minpoop.authenticate', () => {
-		authenticate();
-	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('minpoop.refresh', async () => {
 		await vscode.commands.executeCommand("workbench.action.closeSidebar");
