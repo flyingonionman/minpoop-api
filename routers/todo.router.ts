@@ -27,6 +27,10 @@ router.put("/todo", isAuth, async (req :any, res)=>{
         return
     }
 
+    if (todo.creatorId !== req.userId){
+        throw new Error("not authorized")
+    }
+
     todo.completed = !todo.completed
     await todo.save()
     res.send({todo});
