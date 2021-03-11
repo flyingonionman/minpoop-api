@@ -12,5 +12,25 @@ router.post("/todo", isAuth, async (req :any, res)=>{
     res.send({todo});
 })
 
+router.get("/todo", isAuth, async (req : any, res)=>{
+    const todos = await Todo.find({
+        where :{creatorId: req.userId},
+        order: { id: "DESC" },
+    });
+    res.send({todos})
+})
+
+router.put("/todo", isAuth, async (req :any, res)=>{
+    const todo = await Todo.findOne(req.body.id);
+    if(!todo){
+        res.send({todo:null});
+        return
+    }
+
+    todo.completed = !todo.completed
+    await todo.save()
+    res.send({todo});
+})
+
 
 export default router

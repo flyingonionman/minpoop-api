@@ -33,7 +33,6 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    <pre>{JSON.stringify(user,null,2)}</pre>
     <Todos {user} {accessToken}/>
     <button on:click={()=>{
         accessToken= ' '
