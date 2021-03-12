@@ -16,6 +16,7 @@ import router from "../routers/index";
 (async()=>{
     await createConnection({
         type:'postgres',
+        port : 3002,
         url : process.env.DATABASE_URL,
         entities: [join(__dirname, './entities/*.*')],
         logging: !__prod__,
@@ -77,7 +78,7 @@ import router from "../routers/index";
         res.send("hello");
     });
     
-    app.listen(3002, ()=>{
+    app.listen(process.env.port, ()=>{
         console.log('listening on localhost:3002')
     });
 

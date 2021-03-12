@@ -1,0 +1,9 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "0412",
+    "database": "minpoop2",
+    "entities" : ["dist/src/entities/*js"]
+ }

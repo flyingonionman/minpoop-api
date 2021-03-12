@@ -18,5 +18,5 @@ RUN npm run build
 ENV NODE_ENV production
 
 EXPOSE 8080
-CMD [ "node", "api/dist/src/index.js" ]
+CMD [ "node", "dist/src/index.js" ]
 USER node
