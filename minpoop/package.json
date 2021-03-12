@@ -2,8 +2,9 @@
 	"name": "minpoop",
 	"publisher": "Meandros",
 	"displayName": "minpoop",
+	"icon": "images/minWeird.jpg",
 	"description": "keeping track of stuff",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.54.0"
 	},

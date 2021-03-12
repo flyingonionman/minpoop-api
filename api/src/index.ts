@@ -16,9 +16,7 @@ import router from "../routers/index";
 (async()=>{
     await createConnection({
         type:'postgres',
-        database: "minpoop",
-        username: 'postgres',
-        password: '0412',
+        url : process.env.DATABASE_URL,
         entities: [join(__dirname, './entities/*.*')],
         logging: !__prod__,
         synchronize: !__prod__,

@@ -3,5 +3,7 @@ declare namespace NodeJS {
     GITHUB_CLIENT_SECRET: string;
     GITHUB_CLIENT_ID: string;
     JWT_SECRET: string;
+    DATABASE_URL : string;
+    port: string;
   }
 }
